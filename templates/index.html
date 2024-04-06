@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCA Compression</title>
+
+    <style>
+        /* CSS styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidenav {
+            width: 200px;
+            background-color: #333;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding-top: 20px;
+        }
+
+        .sidenav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidenav ul li {
+            margin-bottom: 10px;
+        }
+
+        .sidenav ul li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px;
+            display: block;
+        }
+
+        .sidenav ul li a:hover {
+            background-color: #555;
+        }
+
+        .content {
+            margin-left: 220px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0;
+            color: #555;
+        }
+
+        input[type="file"] {
+            margin-bottom: 20px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        input[type="submit"] {
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        /* About section style */
+        #aboutSection {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+</head>
+<body>
+    <div class="container">
+        <!-- Side navigation bar -->
+        <nav class="sidenav">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="#" id="adjustLink">Adjust Image</a></li>
+                <li><a href="#" id="aboutLink">About</a></li> <!-- Added "About" link -->
+            </ul>
+        </nav>
+
+        <!-- Main content -->
+        <div class="content">
+            <h1>PCA Compression</h1>
+            <form action="/compress" method="post" enctype="multipart/form-data">
+                <label for="file">Upload Image:</label>
+                <input type="file" name="file" accept="image/*" required onchange="updateImageDetails(this)">
+
+                <label for="quality">Image Quality:</label>
+                <input type="range" name="quality" min="1" max="100" value="85" onchange="updateQuality(this.value)">
+                <span id="qualityValue">85</span>
+
+                <label for="original_height">Original Height:</label>
+                <input type="number" name="original_height" id="original_height" readonly>
+
+                <label for="original_width">Original Width:</label>
+                <input type="number" name="original_width" id="original_width" readonly>
+
+                <input type="submit" value="Compress">
+            </form>
+            <!-- This image element will display the uploaded image -->
+            <img src="#" alt="Uploaded Image" id="uploadedImage" style="max-width: 100%; max-height: 100%;">
+
+            <!-- About section initially hidden -->
+            <div id="aboutSection" style="display: none;">
+                <h2>About My Team</h2>
+                <p>G.DEV AMARNADH</p>
+                <p>B.DEVI</p>
+                <p>V.GOPI</p>
+                <p>VENU</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to update image details like width and height
+        function updateImageDetails(input) {
+            if (input.files && input.files[0]) {
+                var img = new Image();
+                img.onload = function() {
+                    document.getElementById('original_height').value = this.height;
+                    document.getElementById('original_width').value = this.width;
+                    document.getElementById('uploadedImage').src = URL.createObjectURL(input.files[0]); // Display the uploaded image
+                };
+                img.src = URL.createObjectURL(input.files[0]);
+            }
+        }
+
+        // Function to update image quality value display
+        function updateQuality(value) {
+            document.getElementById('qualityValue').textContent = value;
+        }
+
+        // Function to adjust image resolution to 8k
+        function adjustResolution() {
+            var img = document.getElementById('uploadedImage'); // Get the uploaded image element
+            var originalWidth = parseInt(document.getElementById('original_width').value);
+            var originalHeight = parseInt(document.getElementById('original_height').value);
+            var targetWidth = 7680; // Target width for 8k resolution
+            var targetHeight = 4320; // Target height for 8k resolution
+
+            // Calculate aspect ratio
+            var aspectRatio = originalWidth / originalHeight;
+
+            // Adjust dimensions while maintaining aspect ratio
+            if (originalWidth > originalHeight) {
+                img.width = targetWidth;
+                img.height = targetWidth / aspectRatio;
+            } else {
+                img.height = targetHeight;
+                img.width = targetHeight * aspectRatio;
+            }
+        }
+
+        // Function to display about section
+        function displayAboutSection() {
+            document.getElementById('aboutSection').style.display = 'block';
+        }
+
+        // Add an event listener to the "Adjust Image" link to call the adjustResolution function when clicked
+        document.getElementById('adjustLink').addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent the default behavior of the link
+            adjustResolution(); // Call the function to adjust resolution
+        });
+
+        // Add an event listener to the "About" link to display the about section
+        document.getElementById('aboutLink').addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent the default behavior of the link
+            displayAboutSection(); // Call the function to display about section
+        });
+    </script>
+</body>
+</body>
+</html>

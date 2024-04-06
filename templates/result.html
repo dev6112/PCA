@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result</title>
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        p {
+            color: #555;
+        }
+
+        img {
+            max-width: 1000px;
+            height: auto;
+            display: block;
+            margin: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+        }
+
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Result</h1>
+
+    <h2>Original Image</h2>
+    <p>Height: {{ original_info.Height }} pixels</p>
+    <p>Width: {{ original_info.Width }} pixels</p>
+    <p>Resolution: {{ original_info.Resolution }} pixels</p>
+    <p>Size: {{ original_size_kb }} KB</p>
+
+    
+    
+    <h2>Compressed Image</h2>
+    <p>Height: {{ compressed_info.Height }} pixels</p>
+    <p>Width: {{ compressed_info.Width }} pixels</p>
+    <p>Resolution: {{ compressed_info.Resolution }} pixels</p>
+    <p>Size: {{ compressed_size_kb }} KB</p>
+
+    <!-- Display the compressed image -->
+    <img src="{{ url_for('download', filename=compressed_image_filename) }}" alt="Compressed Image">
+    
+    <h2>Download Links</h2>
+    <p><a href="{{ url_for('download', filename=compressed_image_filename) }}">Download Compressed Image</a></p>
+    <p><a href="{{ url_for('download', filename=compressed_pdf_filename) }}">Download Compressed PDF</a></p>
+
+    <h2>Convert to PDF</h2>
+    <form action="{{ url_for('convert_to_pdf') }}" method="post">
+        <input type="hidden" name="adjusted_image_filename" value="{{ compressed_image_filename }}">
+        <button type="submit">Convert Compressed Image to PDF</button>
+    </form>
+
+</body>
+</html>
